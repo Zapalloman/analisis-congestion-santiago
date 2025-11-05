@@ -88,7 +88,7 @@ if (is.factor(target) || is.character(target)) {
   if (unique_values > 20) {
     cat("ADVERTENCIA: demasiadas clases forzando regresion\n")
     is_classification <- FALSE
-    problem_type <- "REGRESIÓN (forzado por
+    problem_type <- "REGRESIÓN (forzado por #clases)"
   } else {
     is_classification <- TRUE
     problem_type <- "CLASIFICACIÓN"
@@ -101,7 +101,7 @@ if (is.factor(target) || is.character(target)) {
     problem_type <- "CLASIFICACIÓN"
   } else if (unique_values > 20 && unique_values < 200) {
     is_classification <- FALSE
-    problem_type <- "REGRESIÓN (forzado por
+    problem_type <- "REGRESIÓN (forzado por #clases)"
     cat("ADVERTENCIA: Demasiadas clases únicas detectadas. Tratando como regresión.\n")
   }
 }
