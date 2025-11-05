@@ -1,0 +1,6 @@
+"Model","Training_Time_Seconds"
+"Linear_Regression",0.464421987533569
+"Decision_Tree",0.295520067214966
+"Neural_Network",3.71488094329834
+"SVM_Epsilon",28.0138649940491
+"KNN",1.29273104667664

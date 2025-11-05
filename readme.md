@@ -43,13 +43,15 @@ Se entrenaron **5 algoritmos** siguiendo estrictamente los requisitos de la rúb
 
 ## Resultados Comparativos
 
-| Rank | Modelo              | RMSE   | MAE    | R²     | MAPE     |
-|------|---------------------|--------|--------|--------|----------|
-| 1    | **K-NN**            | 0.9348 | 0.5109 | 0.2061 | 77.35%   |
-| 2    | Neural Network      | 0.9499 | 0.5173 | 0.1802 | 79.48%   |
-| 3    | Decision Tree       | 0.9567 | 0.5318 | 0.1684 | 83.41%   |
-| 4    | Linear Regression   | 0.9603 | 0.5201 | 0.1622 | 80.65%   |
-| 5    | SVM-ε               | 0.9966 | 0.4594 | 0.0977 | 49.38%   |
+| Rank | Modelo              | RMSE   | MAE    | R²     | MAPE     | Tiempo (s) |
+|------|---------------------|--------|--------|--------|----------|------------|
+| 1    | **K-NN**            | 0.9348 | 0.5109 | 0.2061 | 77.35%   | 1.29       |
+| 2    | Neural Network      | 0.9499 | 0.5173 | 0.1802 | 79.48%   | 3.71       |
+| 3    | Decision Tree       | 0.9567 | 0.5318 | 0.1684 | 83.41%   | 0.30       |
+| 4    | Linear Regression   | 0.9603 | 0.5201 | 0.1622 | 80.65%   | 0.46       |
+| 5    | SVM-ε               | 0.9966 | 0.4594 | 0.0977 | 49.38%   | 28.01      |
+
+**Nota:** Tiempos de entrenamiento medidos con validación cruzada de 3 folds en dataset de 10,000 observaciones.
 
 ## Interpretación del Modelo Ganador
 
@@ -92,12 +94,17 @@ Hemos desarrollado un sistema que analiza 24 características del tráfico (ubic
 
 ✅ **Resultados y Modelos:**
 - `results.csv` - Tabla comparativa de métricas por modelo
+- `training_times.csv` - Tiempos de entrenamiento de cada algoritmo (en segundos)
 - `models_and_preprocessing.rds` - Modelos entrenados y parámetros de preprocesamiento
+- `knn_modelo.rds` - Modelo K-NN standalone para uso independiente
 
 ✅ **Visualizaciones:**
 - `metricas_comparacion.png` - Gráfico de barras con RMSE por modelo
+- `arbol_decision.png` - Visualización del árbol de decisión (mejor modelo)
+- `red_neuronal.png` - Arquitectura de la red neuronal entrenada
 - `roc_residuales.png` - Residuales vs predicción del modelo ganador
 - `importancia_variables.png` - Top 15 features más importantes
+- `knn_residuales.png` - Gráfico de residuales del modelo K-NN standalone
 
 ---
 

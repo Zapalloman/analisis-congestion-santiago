@@ -14,7 +14,9 @@ packages <- c(
   "dplyr",
   "tidyr",
   "gridExtra",
-  "MLmetrics"
+  "MLmetrics",
+  "rpart.plot",
+  "NeuralNetTools"
 )
 for (pkg in packages) {
   if (!require(pkg, character.only = TRUE, quietly = TRUE)) {
@@ -317,7 +319,11 @@ train_data <- X_train
 train_data$target_variable <- y_train
 if (is_classification) {
   cat("\n>>> MODO CLASIFICACIÓN <<<\n")
+  
+  training_times <- list()
+  
   cat("\nEntrenando Regresión Logística...\n")
+  tiempo_inicio <- Sys.time()
   if (length(levels(y_train)) == 2) {
     models_list[["Logistic_Regression"]] <- train(
       target_variable ~ .,
@@ -337,7 +343,11 @@ if (is_classification) {
       metric = metric_optimize
     )
   }
+  training_times[["Logistic_Regression"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["Logistic_Regression"]]))
+  
   cat("Entrenando Árbol de Decisión...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["Decision_Tree"]] <- train(
     x = X_train,
     y = y_train,
@@ -346,7 +356,11 @@ if (is_classification) {
     tuneGrid = expand.grid(cp = c(0.01, 0.05)),
     metric = metric_optimize
   )
+  training_times[["Decision_Tree"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["Decision_Tree"]]))
+  
   cat("Entrenando Red Neuronal...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["Neural_Network"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -357,7 +371,11 @@ if (is_classification) {
     maxit = 100,
     metric = metric_optimize
   )
+  training_times[["Neural_Network"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["Neural_Network"]]))
+  
   cat("Entrenando Naive Bayes...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["Naive_Bayes"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -365,7 +383,11 @@ if (is_classification) {
     trControl = train_control,
     metric = metric_optimize
   )
+  training_times[["Naive_Bayes"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["Naive_Bayes"]]))
+  
   cat("Entrenando SVM (RBF)...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["SVM_RBF"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -374,7 +396,11 @@ if (is_classification) {
     tuneGrid = expand.grid(sigma = c(0.05), C = c(1, 2)),
     metric = metric_optimize
   )
+  training_times[["SVM_RBF"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["SVM_RBF"]]))
+  
   cat("Entrenando K-NN...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["KNN"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -383,9 +409,15 @@ if (is_classification) {
     tuneGrid = expand.grid(k = c(5, 7)),
     metric = metric_optimize
   )
+  training_times[["KNN"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["KNN"]]))
 } else {
   cat("\n>>> MODO REGRESIÓN <<<\n")
+  
+  training_times <- list()
+  
   cat("\nEntrenando Regresión Lineal...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["Linear_Regression"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -393,7 +425,11 @@ if (is_classification) {
     trControl = train_control,
     metric = metric_optimize
   )
+  training_times[["Linear_Regression"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["Linear_Regression"]]))
+  
   cat("Entrenando Árbol de Decisión (Regresión)...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["Decision_Tree"]] <- train(
     x = X_train,
     y = y_train,
@@ -402,7 +438,11 @@ if (is_classification) {
     tuneGrid = expand.grid(cp = c(0.01, 0.05)),
     metric = metric_optimize
   )
+  training_times[["Decision_Tree"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["Decision_Tree"]]))
+  
   cat("Entrenando Red Neuronal (Regresión)...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["Neural_Network"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -414,7 +454,11 @@ if (is_classification) {
     maxit = 100,
     metric = metric_optimize
   )
+  training_times[["Neural_Network"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["Neural_Network"]]))
+  
   cat("Entrenando SVM-ε (Regresión)...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["SVM_Epsilon"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -423,7 +467,11 @@ if (is_classification) {
     tuneGrid = expand.grid(sigma = c(0.05), C = c(1, 2)),
     metric = metric_optimize
   )
+  training_times[["SVM_Epsilon"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["SVM_Epsilon"]]))
+  
   cat("Entrenando K-NN (Regresión)...\n")
+  tiempo_inicio <- Sys.time()
   models_list[["KNN"]] <- train(
     target_variable ~ .,
     data = train_data,
@@ -432,6 +480,8 @@ if (is_classification) {
     tuneGrid = expand.grid(k = c(5, 7)),
     metric = metric_optimize
   )
+  training_times[["KNN"]] <- as.numeric(difftime(Sys.time(), tiempo_inicio, units = "secs"))
+  cat(sprintf("Tiempo: %.2f segundos\n", training_times[["KNN"]]))
 }
 cat(sprintf("\nTotal de modelos entrenados: %d\n", length(models_list)))
 cat("\n=== Evaluando modelos en test ===\n")
@@ -544,6 +594,43 @@ if (is_classification) {
 }
 ggsave("metricas_comparacion.png", plot = p1, width = 10, height = 6, dpi = 300)
 cat("Guardado: metricas_comparacion.png\n")
+
+cat("\n=== Generando visualizaciones adicionales ===\n")
+
+if ("Decision_Tree" %in% names(models_list)) {
+  cat("Generando gráfico del árbol de decisión...\n")
+  png("arbol_decision.png", width = 1200, height = 800, res = 150)
+  rpart.plot(models_list[["Decision_Tree"]]$finalModel, 
+             main = "Árbol de Decisión - Mejor Modelo",
+             extra = 101,
+             box.palette = "RdYlGn",
+             branch.lty = 3,
+             shadow.col = "gray",
+             nn = TRUE)
+  dev.off()
+  cat("Guardado: arbol_decision.png\n")
+}
+
+if ("Neural_Network" %in% names(models_list)) {
+  cat("Generando gráfico de la red neuronal...\n")
+  tryCatch({
+    png("red_neuronal.png", width = 1200, height = 800, res = 150)
+    plotnet(models_list[["Neural_Network"]]$finalModel,
+            circle_col = list("lightblue", "lightgreen", "salmon"),
+            bord_col = "black",
+            circle_cex = 5,
+            cex_val = 0.8,
+            alpha_val = 0.7,
+            max_sp = TRUE)
+    title(main = "Arquitectura de la Red Neuronal", cex.main = 1.5)
+    dev.off()
+    cat("Guardado: red_neuronal.png\n")
+  }, error = function(e) {
+    cat("Advertencia: No se pudo generar el gráfico de red neuronal.\n")
+    cat("Error:", e$message, "\n")
+  })
+}
+
 if (is_classification) {
   winner_model <- models_list[[winner]]
   probs_winner <- predict(winner_model, newdata = X_test, type = "prob")
@@ -630,6 +717,17 @@ if (!is.null(var_importance)) {
 cat("\n=== Guardando resultados ===\n")
 write.csv(results_table, "results.csv", row.names = FALSE)
 cat("Guardado: results.csv\n")
+
+training_times_df <- data.frame(
+  Model = names(training_times),
+  Training_Time_Seconds = unlist(training_times),
+  stringsAsFactors = FALSE
+)
+write.csv(training_times_df, "training_times.csv", row.names = FALSE)
+cat("Guardado: training_times.csv\n")
+cat("\nTiempos de entrenamiento:\n")
+print(training_times_df)
+
 saveRDS(list(
   scaling_params = scaling_params,
   target_col = target_col,
@@ -637,6 +735,7 @@ saveRDS(list(
   problem_type = problem_type,
   models = models_list,
   results = results_table,
+  training_times = training_times,
   winner = winner,
   top3_features = top3_features
 ), "models_and_preprocessing.rds")
