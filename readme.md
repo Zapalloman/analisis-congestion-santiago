@@ -5,7 +5,7 @@
 ### 🏆 Proyecto Ganador - Olimpiadas de Minería de Datos 2025
 **Universidad Andrés Bello | Ingeniería Civil Informática**
 
-[![Demo Live](https://img.shields.io/badge/🌐_Demo_Live-Shiny_App-blue?style=for-the-badge)](https://zapallo.shinyapps.io/congestion-santiago-ml/)
+[![Demo Live](https://img.shields.io/badge/🌐_Demo_Live-Shiny_App-blue?style=for-the-badge)](https://zapallo.shinyapps.io/congestion-santiago-v2/)
 [![R](https://img.shields.io/badge/R-4.5.1-276DC3?style=for-the-badge&logo=r)](https://www.r-project.org/)
 [![Machine Learning](https://img.shields.io/badge/Machine_Learning-Supervised-green?style=for-the-badge)]()
 [![Status](https://img.shields.io/badge/Status-Production-success?style=for-the-badge)]()
