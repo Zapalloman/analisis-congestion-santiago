@@ -1,135 +1,321 @@
-# DECISIONES DE MODELADO
+<div align="center">
 
-## 🌐 Dashboard Interactivo
+# 🚗 Predicción de Congestión Vehicular en Santiago
 
-**Visualiza todos los resultados en vivo:**  
-👉 **https://zapallo.shinyapps.io/congestion-santiago-ml/**
+### 🏆 Proyecto Ganador - Olimpiadas de Minería de Datos 2025
+**Universidad Andrés Bello | Ingeniería Civil Informática**
 
-El dashboard incluye:
-- 📊 Comparación de modelos con gráficos interactivos
-- ⏱️ Tiempos de entrenamiento por algoritmo
-- 📈 Coeficientes de regresión lineal
-- 🌳 Visualización del árbol de decisión
-- 🧠 Arquitectura de la red neuronal
-- 📉 Gráficos de residuales e importancia de variables
-- 📋 Tabla completa de validación en datos de prueba
+[![Demo Live](https://img.shields.io/badge/🌐_Demo_Live-Shiny_App-blue?style=for-the-badge)](https://zapallo.shinyapps.io/congestion-santiago-ml/)
+[![R](https://img.shields.io/badge/R-4.5.1-276DC3?style=for-the-badge&logo=r)](https://www.r-project.org/)
+[![Machine Learning](https://img.shields.io/badge/Machine_Learning-Supervised-green?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/Status-Production-success?style=for-the-badge)]()
 
----
+<br>
 
-## Tipo de Problema
+**Sistema de Machine Learning que predice la duración de congestión vehicular en Santiago de Chile con un error promedio de ~31 minutos, utilizando datos geoespaciales y de infraestructura vial.**
 
-**REGRESIÓN (forzado por #clases)**: La variable objetivo `Duration_hrs` fue detectada automáticamente. Se identificó como regresión debido a que presenta valores numéricos continuos con alta variabilidad (118 valores únicos).
+[🚀 Ver Demo en Vivo](https://zapallo.shinyapps.io/congestion-santiago-ml/) • [📊 Resultados](#-resultados) • [🛠️ Tecnologías](#️-stack-tecnológico)
 
-## Algoritmos Utilizados
-
-Se entrenaron **5 algoritmos** siguiendo estrictamente los requisitos de la rúbrica:
-
-1. **Regresión Lineal**: Modelo base, asume relación lineal, altamente interpretable.
-2. **Árbol de Decisión (DT)**: rpart, captura no linealidades mediante particiones recursivas.
-3. **Red Neuronal (NN)**: nnet con linout=TRUE y size∈{3,5}, aproximador universal de funciones.
-4. **SVM-ε**: Regresión con kernel RBF, cost∈{1,2} y sigma=0.05, robusto a outliers.
-5. **K-NN**: k∈{5,7}, regresión no paramétrica basada en vecinos cercanos.
-
-## Tratamiento de Datos
-
-### Valores Nulos e Imposibles
-- **Outliers**: Se aplicó la regla IQR×3 marcando 418 valores extremos como NA.
-- **Valores imposibles**: Se detectaron y marcaron como NA (e.g., duraciones/velocidades negativas).
-- **Imputación**: Mediana para variables numéricas, moda para variables dummy (one-hot encoded).
-- **Optimización**: Dataset reducido de 76,140 a 10,000 observaciones mediante submuestreo estratificado para mejorar eficiencia computacional sin perder representatividad.
-
-### Escalado
-- **Estandarización z-score**: Solo en variables numéricas continuas (excluyendo dummies).
-- **Sin data leakage**: Medias y desviaciones estándar calculadas únicamente en train y aplicadas a test.
-
-### Tratamiento de Alta Cardinalidad
-- **Eliminación de columnas**: Se removieron variables con >100 valores únicos (`Street` con 2,081 valores, `Peak_Time` con 186, `Hora.Inicio` con 179, `Hora.Fin` con 196) que generaban explosión dimensional.
-- **Top-K encoding**: Para `Commune` (52 niveles), se utilizaron solo los 20 más frecuentes, agrupando el resto como "Other".
-- **Resultado**: Reducción de 3,882 a 24 features, eliminando ruido y multicolinealidad.
-
-### Desbalance de Clases
-- No aplica (problema de regresión).
-
-## Métricas y Criterio de Selección
-
-- **Métrica principal**: RMSE (Root Mean Squared Error).
-- **Justificación**: RMSE penaliza errores grandes, sensible a outliers, interpretable en unidades originales (horas).
-- **Métricas adicionales**: MAE (error absoluto medio), R² (bondad de ajuste), MAPE (error porcentual).
-- **Selección**: 3-fold CV en train, modelo con menor RMSE promedio.
-
-## Resultados Comparativos
-
-| Rank | Modelo              | RMSE   | MAE    | R²     | MAPE     | Tiempo (s) |
-|------|---------------------|--------|--------|--------|----------|------------|
-| 1    | **K-NN**            | 0.9348 | 0.5109 | 0.2061 | 77.35%   | 1.29       |
-| 2    | Neural Network      | 0.9499 | 0.5173 | 0.1802 | 79.48%   | 3.71       |
-| 3    | Decision Tree       | 0.9567 | 0.5318 | 0.1684 | 83.41%   | 0.30       |
-| 4    | Linear Regression   | 0.9603 | 0.5201 | 0.1622 | 80.65%   | 0.46       |
-| 5    | SVM-ε               | 0.9966 | 0.4594 | 0.0977 | 49.38%   | 28.01      |
-
-**Nota:** Tiempos de entrenamiento medidos con validación cruzada de 3 folds en dataset de 10,000 observaciones.
-
-## Interpretación del Modelo Ganador
-
-**Modelo**: K-NN (k=5 o k=7)
-
-### Top-3 Features más Importantes:
-
-1. **Length_km**: La longitud del trayecto es el predictor más relevante. Trayectos más largos tienden a tener mayor variabilidad en duración debido a múltiples factores de congestión acumulados.
-
-2. **Commune_Santiago**: La comuna específica (Santiago Centro) muestra patrones distintivos de tráfico. Zonas céntricas presentan mayor densidad vehicular y congestión característica.
-
-3. **Longitud (coordenada)**: La ubicación geográfica longitudinal es determinante, sugiriendo que el eje este-oeste de la ciudad tiene características de flujo vehicular diferenciadas (e.g., zonas residenciales vs comerciales).
-
-### Análisis de Performance:
-
-- **RMSE = 0.935 horas**: El modelo predice la duración de congestión con un error cuadrático medio de ~56 minutos.
-- **R² = 0.206**: El modelo explica el 20.6% de la varianza. Aunque moderado, es razonable dado que el tráfico urbano tiene componentes aleatorios difíciles de modelar (eventos, clima, comportamiento humano).
-- **MAE = 0.51 horas**: Error absoluto medio de ~31 minutos, indicando buena precisión práctica.
-
-### Por qué K-NN ganó:
-
-K-NN capturó mejor las **relaciones no lineales locales** entre features geoespaciales y temporales. Al basarse en vecinos cercanos, el modelo puede identificar patrones específicos de zonas/horarios sin asumir relaciones globales, lo cual es ideal para tráfico urbano heterogéneo.
-
-## Mini-Pitch para Público No Técnico
-
-🚦 **Predicción inteligente de congestión vehicular en Santiago**: 
-
-Hemos desarrollado un sistema que analiza 24 características del tráfico (ubicación, longitud de ruta, velocidad, comuna, etc.) usando 5 modelos de inteligencia artificial. El modelo ganador (K-NN) predice la duración de congestión con un **error promedio de ~31 minutos**, identificando que la **longitud del trayecto** y la **zona específica** (especialmente Santiago Centro) son los factores más determinantes. Esta herramienta permite a autoridades y ciudadanos optimizar rutas, reducir tiempos de viaje hasta en un 20% y mejorar la planificación urbana de movilidad basándose en patrones históricos confiables.
-
-## Reproducibilidad
-
-- **Semilla**: `set.seed(123)` fijada al inicio para garantizar resultados idénticos.
-- **Splits**: División train/test (80/20) con índices fijos, submuestreo estratificado por cuartiles de duración.
-- **Grids**: Hiperparámetros predefinidos y limitados para todos los algoritmos (búsqueda exhaustiva en espacio reducido).
-- **Data Leakage**: ✅ Verificado. Todo preprocesamiento (escalado, imputación, encoding) se ajusta exclusivamente en train y se aplica de forma consistente a test.
-- **Serialización**: Modelos y parámetros guardados en `models_and_preprocessing.rds` para reutilización.
-- **Validación Cruzada**: 3-fold CV con particiones aleatorias pero reproducibles.
-
-## Archivos Generados
-
-✅ **Resultados y Modelos:**
-- `results.csv` - Tabla comparativa de métricas por modelo
-- `training_times.csv` - Tiempos de entrenamiento de cada algoritmo (en segundos)
-- `models_and_preprocessing.rds` - Modelos entrenados y parámetros de preprocesamiento
-- `knn_modelo.rds` - Modelo K-NN standalone para uso independiente
-
-✅ **Visualizaciones:**
-- `metricas_comparacion.png` - Gráfico de barras con RMSE por modelo
-- `arbol_decision.png` - Visualización del árbol de decisión (mejor modelo)
-- `red_neuronal.png` - Arquitectura de la red neuronal entrenada
-- `roc_residuales.png` - Residuales vs predicción del modelo ganador
-- `importancia_variables.png` - Top 15 features más importantes
-- `knn_residuales.png` - Gráfico de residuales del modelo K-NN standalone
-
-✅ **Dashboard Web:**
-- `app.R` - Aplicación Shiny interactiva con todas las visualizaciones
-- **URL en vivo:** https://zapallo.shinyapps.io/congestion-santiago-ml/
+</div>
 
 ---
 
-**Modelo Ganador:** K-NN  
-**RMSE:** 0.9348  
-**Dashboard:** https://zapallo.shinyapps.io/congestion-santiago-ml/  
-**Fecha:** Noviembre 2025  
-**Dataset:** Congestión Santiago (10,001 observaciones de 76,140 originales)
+## 📋 Tabla de Contenidos
+
+- [El Problema](#-el-problema)
+- [La Solución](#-la-solución)
+- [Resultados](#-resultados)
+- [Demo Interactivo](#-demo-interactivo)
+- [Metodología](#-metodología)
+- [Stack Tecnológico](#️-stack-tecnológico)
+- [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Instalación y Uso](#-instalación-y-uso)
+- [Autor](#-autor)
+
+---
+
+## 🎯 El Problema
+
+<table>
+<tr>
+<td width="60%">
+
+### Contexto
+
+La **congestión vehicular en Santiago** es uno de los principales desafíos de movilidad urbana en Chile. Con millones de vehículos circulando diariamente, los conductores y autoridades necesitan herramientas predictivas que les permitan:
+
+- ⏱️ Estimar tiempos de viaje con precisión
+- 🛣️ Planificar rutas alternativas
+- 🏛️ Tomar decisiones de infraestructura basadas en datos
+
+### El Desafío
+
+¿Es posible **predecir cuánto durará un episodio de congestión** usando únicamente características geográficas, temporales y de infraestructura vial?
+
+</td>
+<td width="40%">
+
+### Datos Clave
+
+| Métrica | Valor |
+|---------|-------|
+| 📊 Observaciones | 10,000 |
+| 🔢 Features originales | 3,882 |
+| 🎯 Features finales | 24 |
+| 🏙️ Comunas analizadas | 52 |
+| ⏱️ Dataset original | 76,140 |
+
+</td>
+</tr>
+</table>
+
+---
+
+## 💡 La Solución
+
+### Enfoque: Machine Learning Supervisado para Regresión
+
+Desarrollé un sistema de **aprendizaje supervisado** que analiza patrones históricos de congestión para predecir la duración de futuros episodios.
+
+```
+📥 Input: Ubicación + Longitud de ruta + Velocidad + Comuna + ...
+    ↓
+🧠 Modelo K-NN (k vecinos más cercanos)
+    ↓
+📤 Output: Duración estimada de congestión (horas)
+```
+
+### ¿Por qué Regresión y no Clasificación?
+
+| Criterio | Decisión |
+|----------|----------|
+| Variable objetivo | `Duration_hrs` → Numérica continua |
+| Valores únicos | 118 → Clasificación sería impráctica |
+| Utilidad práctica | "2.5 horas" > "Congestión alta" |
+
+### 5 Algoritmos Comparados
+
+| # | Algoritmo | Descripción | Fortaleza |
+|---|-----------|-------------|-----------|
+| 1 | **Regresión Lineal** | Modelo baseline | Interpretabilidad |
+| 2 | **Árbol de Decisión** | Particiones recursivas | Visualización |
+| 3 | **Red Neuronal** | Capas ocultas (3-5 neuronas) | Patrones complejos |
+| 4 | **SVM-ε** | Kernel RBF | Robustez a outliers |
+| 5 | **K-NN** | Vecinos cercanos | Patrones locales |
+
+---
+
+## 📊 Resultados
+
+### 🏆 Modelo Ganador: K-NN
+
+<div align="center">
+
+| Métrica | Valor | Interpretación |
+|---------|-------|----------------|
+| **RMSE** | 0.9348 | ~56 min error cuadrático |
+| **MAE** | 0.5109 | **~31 min error promedio** |
+| **R²** | 0.2061 | 20.6% varianza explicada |
+| **Tiempo** | 1.29s | Entrenamiento rápido |
+
+</div>
+
+### Ranking Completo de Modelos
+
+| Rank | Modelo | RMSE | MAE | R² | Tiempo |
+|:----:|--------|------|-----|----|---------
+| 🥇 | **K-NN** | 0.9348 | 0.5109 | 0.2061 | 1.29s |
+| 🥈 | Neural Network | 0.9499 | 0.5173 | 0.1802 | 3.71s |
+| 🥉 | Decision Tree | 0.9567 | 0.5318 | 0.1684 | 0.30s |
+| 4 | Linear Regression | 0.9603 | 0.5201 | 0.1622 | 0.46s |
+| 5 | SVM-ε | 0.9966 | 0.4594 | 0.0977 | 28.01s |
+
+### ¿Por qué K-NN ganó?
+
+> K-NN capturó mejor las **relaciones no lineales locales** entre features geoespaciales. Al basarse en vecinos cercanos, identifica patrones específicos de zonas y horarios sin asumir relaciones globales — ideal para el tráfico urbano heterogéneo de Santiago.
+
+### Top 3 Variables Predictoras
+
+1. **📏 Length_km** — Longitud del trayecto (mayor distancia → más variabilidad)
+2. **🏙️ Commune_Santiago** — Patrones distintivos de Santiago Centro
+3. **🌐 Longitud geográfica** — Eje este-oeste con flujos diferenciados
+
+---
+
+## 🌐 Demo Interactivo
+
+### [👉 Ver Dashboard en Vivo](https://zapallo.shinyapps.io/congestion-santiago-ml/)
+
+El dashboard interactivo incluye:
+
+| Sección | Descripción |
+|---------|-------------|
+| 📊 **Comparación de Modelos** | Gráficos interactivos con métricas |
+| ⏱️ **Tiempos de Entrenamiento** | Benchmark por algoritmo |
+| 📈 **Regresión Lineal** | Tabla de coeficientes e impacto |
+| 🌳 **Árbol de Decisión** | Visualización del modelo |
+| 🧠 **Red Neuronal** | Arquitectura de la red |
+| 📉 **Análisis de Residuales** | Diagnóstico del modelo |
+
+---
+
+## 🔬 Metodología
+
+### Pipeline de Datos
+
+```mermaid
+graph LR
+    A[Dataset Original<br>76,140 obs] --> B[Limpieza<br>Outliers IQR×3]
+    B --> C[Submuestreo<br>10,000 obs]
+    C --> D[Feature Engineering<br>3,882 → 24 features]
+    D --> E[Train/Test Split<br>80/20]
+    E --> F[3-Fold CV<br>Optimización]
+    F --> G[Modelo Final<br>K-NN]
+```
+
+### Tratamiento de Datos
+
+| Etapa | Técnica | Resultado |
+|-------|---------|-----------|
+| **Outliers** | Regla IQR × 3 | 418 valores marcados |
+| **Imputación** | Mediana (numéricas) / Moda (categóricas) | 0% valores nulos |
+| **Escalado** | Z-score (sin data leakage) | Variables estandarizadas |
+| **Alta Cardinalidad** | Top-K encoding (comunas) | 52 → 20 categorías |
+| **Reducción** | Eliminación columnas >100 valores únicos | 3,882 → 24 features |
+
+### Validación Cruzada
+
+- **Método**: 3-Fold Cross-Validation
+- **Métrica de selección**: RMSE (menor = mejor)
+- **Reproducibilidad**: `set.seed(123)` + splits fijos
+
+---
+
+## 🛠️ Stack Tecnológico
+
+<div align="center">
+
+| Categoría | Tecnología |
+|-----------|------------|
+| **Lenguaje** | R 4.5.1 |
+| **ML Framework** | caret, rpart, nnet, e1071 |
+| **Visualización** | ggplot2, plotly, rpart.plot |
+| **Dashboard** | Shiny + shinydashboard |
+| **Deploy** | shinyapps.io |
+| **Control de versiones** | Git |
+
+</div>
+
+---
+
+## 📁 Estructura del Proyecto
+
+```
+📦 congestion-santiago-ml/
+├── 📊 analisis_completo.R          # Pipeline completo de análisis
+├── 🌐 app.R                         # Dashboard Shiny
+├── 📄 Congestion_Santiago_05_2025.csv  # Dataset
+├── 📋 results.csv                   # Métricas comparativas
+├── ⏱️ training_times.csv            # Tiempos de entrenamiento
+├── 🤖 knn_modelo.rds                # Modelo K-NN exportado
+├── 💾 models_and_preprocessing.rds  # Todos los modelos + preprocesamiento
+└── 📖 readme.md                     # Documentación
+```
+
+---
+
+## 🚀 Instalación y Uso
+
+### Prerrequisitos
+
+```r
+install.packages(c("shiny", "shinydashboard", "caret", "plotly", 
+                   "rpart", "rpart.plot", "nnet", "e1071", "kknn",
+                   "DT", "ggplot2", "dplyr"))
+```
+
+### Ejecutar Localmente
+
+```bash
+# Clonar repositorio
+git clone https://github.com/tu-usuario/congestion-santiago-ml.git
+cd congestion-santiago-ml
+
+# Ejecutar dashboard
+Rscript -e "shiny::runApp('app.R')"
+```
+
+### Usar el Modelo Entrenado
+
+```r
+# Cargar modelo
+modelo_knn <- readRDS("knn_modelo.rds")
+
+# Hacer predicción
+nueva_observacion <- data.frame(
+  Length_km = 2.5,
+  Speed_kmh = 30,
+  Latitud = -33.45,
+  Longitud = -70.65,
+  # ... otras features
+)
+
+prediccion <- predict(modelo_knn, nueva_observacion)
+cat("Duración estimada:", round(prediccion * 60), "minutos")
+```
+
+---
+
+## 🎯 Impacto y Aplicaciones
+
+### Para Autoridades de Tránsito
+- 🎯 Priorizar intervenciones en trayectos largos y zonas céntricas
+- 🗺️ Planificar rutas alternativas según ubicación geográfica
+- 📊 Base para sistemas de información ciudadana en tiempo real
+
+### Para Ciudadanos
+- ⏰ Estimaciones de tiempo de viaje más precisas
+- 🚗 Mejor elección de rutas y horarios
+- 📱 Potencial integración con apps de navegación
+
+---
+
+## 📈 Trabajo Futuro
+
+- [ ] Incorporar datos climáticos (lluvia, temperatura)
+- [ ] Agregar eventos programados (partidos, conciertos)
+- [ ] Implementar ensemble methods (Random Forest, XGBoost)
+- [ ] Escalar a dataset completo (76,140 observaciones)
+- [ ] Desarrollar API REST para predicciones en tiempo real
+
+---
+
+## 👤 Autor
+
+<div align="center">
+
+**Javier Farías**
+
+Ingeniería Civil Informática | Universidad Andrés Bello
+
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/tu-perfil)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/tu-usuario)
+
+</div>
+
+---
+
+<div align="center">
+
+### 🏆 Proyecto Ganador
+**Olimpiadas de Minería de Datos 2025**
+
+Universidad Andrés Bello | Minería de Datos
+
+---
+
+*Desarrollado con ❤️ en Santiago de Chile*
+
+**[🚀 Ver Demo en Vivo](https://zapallo.shinyapps.io/congestion-santiago-ml/)**
+
+</div>
