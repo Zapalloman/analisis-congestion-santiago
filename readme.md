@@ -144,7 +144,7 @@ Desarrollé un sistema de **aprendizaje supervisado** que analiza patrones hist�
 
 ## 🌐 Demo Interactivo
 
-### [👉 Ver Dashboard en Vivo](https://zapallo.shinyapps.io/congestion-santiago-ml/)
+### [👉 Ver Dashboard en Vivo](https://zapallo.shinyapps.io/congestion-santiago-v2/)
 
 El dashboard interactivo incluye:
 
