@@ -14,7 +14,7 @@
 
 **Sistema de Machine Learning que predice la duración de congestión vehicular en Santiago de Chile con un error promedio de ~31 minutos, utilizando datos geoespaciales y de infraestructura vial.**
 
-[🚀 Ver Demo en Vivo](https://zapallo.shinyapps.io/congestion-santiago-ml/) • [📊 Resultados](#-resultados) • [🛠️ Tecnologías](#️-stack-tecnológico)
+[🚀 Ver Demo en Vivo](https://zapallo.shinyapps.io/congestion-santiago-v2/) • [📊 Resultados](#-resultados) • [🛠️ Tecnologías](#️-stack-tecnológico)
 
 </div>
 
@@ -238,8 +238,8 @@ install.packages(c("shiny", "shinydashboard", "caret", "plotly",
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/tu-usuario/congestion-santiago-ml.git
-cd congestion-santiago-ml
+git clone https://github.com/Zapalloman/solemne-2-miner-a.git
+cd solemne-2-miner-a
 
 # Ejecutar dashboard
 Rscript -e "shiny::runApp('app.R')"
@@ -298,8 +298,8 @@ cat("Duración estimada:", round(prediccion * 60), "minutos")
 
 Ingeniería Civil Informática | Universidad Andrés Bello
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/tu-perfil)
-[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/tu-usuario)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=for-the-badge&logo=linkedin)](https://linkedin.com/in/javierfariasc)
+[![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=for-the-badge&logo=github)](https://github.com/zapalloman)
 
 </div>
 
@@ -316,6 +316,6 @@ Universidad Andrés Bello | Minería de Datos
 
 *Desarrollado con ❤️ en Santiago de Chile*
 
-**[🚀 Ver Demo en Vivo](https://zapallo.shinyapps.io/congestion-santiago-ml/)**
+**[🚀 Ver Demo en Vivo](https://zapallo.shinyapps.io/congestion-santiago-v2/)**
 
 </div>
