@@ -238,7 +238,7 @@ install.packages(c("shiny", "shinydashboard", "caret", "plotly",
 
 ```bash
 # Clonar repositorio
-git clone https://github.com/Zapalloman/solemne-2-miner-a.git
+git clone https://github.com/Zapalloman/analisis-congestion-santiago
 cd solemne-2-miner-a
 
 # Ejecutar dashboard
